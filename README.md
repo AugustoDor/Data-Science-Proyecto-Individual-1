@@ -1,6 +1,7 @@
 # Proyecto Individual n°1
  # Machine Learning Operations (MLOps)
 
+
 ## Descripción
 El objetivo del proyecto es desarrollar un sistema de recomendación de videojuegos para la plataforma Steam. 
 Se emplea la Extracción, Transformación y Carga (ETL) de los datos para limpiarlos y normalizarlos.
@@ -15,25 +16,40 @@ Se crean diferentes respuestas a consultas, a partir de funciones:
 
 Por utlimo se implementa el modelo de aprendizaje automático que brinda un sistema de recomendación. El modelo responde a una relación ítem-ítem, es decir, toma un ítem y recomienda otros similares basados en su similitud.
 
-## Dependencias
-- python 3.x, en este caso se trabajo con python 3.10
-- pip
-- pandas
-- matplotlib
-- seaborn
-- uvicorn
-- fastapi
-- nltk
-- fastparquet
-- numpy
 
-Esas son las principales, el resto está en el archivo requeriments.txt
+## Dependencias
+Las principales dependencias utilizadas en este proyecto son:
+
+- Python >=3.7 y <3.11  (se trabajó con Python 3.10)
+- Pip
+- Pandas
+- Matplotlib
+- Seaborn
+- Uvicorn
+- FastAPI
+- NLTK
+- Fastparquet
+- Numpy
+
+El resto de las dependencias se encuentra en el archivo requirements.txt.
+
 
 ### Deploy en Render
-Para el deploy de la API se seleccionó la plataforma Render. El servicio esta corriendo en [https://proyecto-individual-1-tbv2.onrender.com](https://proyecto-individual-1-tbv2.onrender.com).
+Para el deploy de la API se seleccionó la plataforma Render. El servicio esta corriendo en [https://data-science-proyecto-individual-1.onrender.com](https://data-science-proyecto-individual-1.onrender.com).
+
 
 ### Video
 En el siguiente enlace se encuentra el [video](https://youtu.be/xhvcsx9634I) con una explicación breve de la API.
+
+
+### Instrucciones para Ejecutar el Proyecto
+ ### Clonar el repositorio:
+ git clone https://github.com/AugustoDor/Data-Science-Proyecto-Individual-1
+ cd proyecto-individual-1
+ ### Instalar las dependencias:
+ pip install -r requirements.txt
+ ### Desplegar la API:
+ uvicorn main:app --reload
 
 ---
 
