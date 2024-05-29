@@ -1,4 +1,5 @@
-# Machine Learning Operations (MLOps)
+# Proyecto Individual n°1
+ # Machine Learning Operations (MLOps)
 
 ## Descripción
 El objetivo del proyecto es desarrollar un sistema de recomendación de videojuegos para la plataforma Steam. 
@@ -32,7 +33,7 @@ Esas son las principales, el resto está en el archivo requeriments.txt
 Para el deploy de la API se seleccionó la plataforma Render. El servicio esta corriendo en [https://proyecto-individual-1-tbv2.onrender.com](https://proyecto-individual-1-tbv2.onrender.com).
 
 ### Video
-En el siguiente enlace se encuentra el [video]() con una explicación breve de la API.
+En el siguiente enlace se encuentra el [video](https://youtu.be/xhvcsx9634I) con una explicación breve de la API.
 
 ---
 
