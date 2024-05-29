@@ -181,17 +181,12 @@ def developer_reviews_analysis(desarrolladora: str):
 def UserForGenre(genero: str):
     # Capitalizamos el nombre del género
     genero = genero.capitalize()
-    # Copiamos los DataFrames de juegos y ítems
-    genre_games = df_games.copy()
-    genre_items = df_item.copy()
-    # Filtramos los juegos del género especificado
-    genre_games = genre_games[genre_games[genero] == 1]
+    # Filtramos los juegos del género especificado directamente
+    genre_games = df_games[df_games[genero] == 1]
     # Unimos los ítems con los juegos del género
-    genre_items = pd.merge(genre_items, genre_games, left_on='item_id', right_on='id')
-    # Eliminamos los valores nulos en 'playtime_forever'
-    genre_items.loc[genre_items['playtime_forever'].astype(str).str.contains('None'), 'playtime_forever'] = None
-    genre_items.dropna(subset=['playtime_forever'], inplace=True)
-    # Convertimos 'playtime_forever' a entero
+    genre_items = pd.merge(df_item, genre_games, left_on='item_id', right_on='id')
+    # Eliminamos los valores nulos en 'playtime_forever' y convertimos a entero
+    genre_items = genre_items[~genre_items['playtime_forever'].astype(str).str.contains('None')].copy()
     genre_items['playtime_forever'] = genre_items['playtime_forever'].astype(int)
     # Filtramos los ítems con un tiempo de juego menor o igual a 8760 horas
     filtered_items = genre_items[genre_items['playtime_forever'] <= 8760]
@@ -202,13 +197,13 @@ def UserForGenre(genero: str):
     # Identificamos al usuario con más horas jugadas
     top_user = grouped_items.groupby('user_id')['playtime_forever'].sum().idxmax()
     # Obtenemos las horas jugadas por año del usuario con más horas jugadas
-    top_user_hours = grouped_items[grouped_items['user_id'] == top_user].copy()
+    top_user_hours = grouped_items[grouped_items['user_id'] == top_user]
     acumulacion_horas_anio = top_user_hours.groupby('anio')['playtime_forever'].sum().reset_index()
     # Creamos una lista con las horas jugadas por año
     horas_jugadas_por_anio = [{'anio': anio, 'horas': horas} for anio, horas in zip(acumulacion_horas_anio['anio'], acumulacion_horas_anio['playtime_forever'])]
     # Creamos un diccionario con los resultados
     resultado = {
-        'Usuario con más horas jugadas para género {}:'.format(genero): top_user,
+        f'Usuario con más horas jugadas para género {genero}:': top_user,
         'Horas jugadas': horas_jugadas_por_anio
     }
     # Devolvemos los resultados
