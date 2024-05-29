@@ -183,11 +183,10 @@ def UserForGenre(genero: str):
     genero = genero.capitalize()
     # Filtramos los juegos del género especificado
     genre_games = df_games[df_games[genero] == 1]
+    genre_games.drop(columns=['genres', 'title', 'tags', 'price', 'developer', 'Accounting', 'Action', 'Adventure', 'Animation&amp', 'AudioProduction', 'Casual','Design&amp', 'EarlyAccess', 'Education', 'FreetoPlay', 'Illustration', 'Indie', 'MassivelyMultiplayer', 'Modeling', 'None', 'PhotoEditing', 'RPG', 'Racing', 'Simulation', 'SoftwareTraining', 'Sports', 'Strategy', 'Utilities', 'VideoProduction', 'WebPublishing', 'mes', 'dia'], inplace=True)
     # Unimos los ítems con los juegos del género y filtramos valores nulos
     genre_items = pd.merge(df_item, genre_games, left_on='item_id', right_on='id')
     genre_items = genre_items[genre_items['playtime_forever'].notna()]
-    # Convertimos 'playtime_forever' a entero
-    genre_items['playtime_forever'] = genre_items['playtime_forever'].astype(int)
     # Filtramos los ítems con un tiempo de juego menor o igual a 8760 horas
     filtered_items = genre_items[genre_items['playtime_forever'] <= 8760]
     # Agrupamos por usuario y año, sumando el tiempo de juego
