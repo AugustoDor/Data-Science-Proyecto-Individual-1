@@ -185,13 +185,8 @@ def UserForGenre(genero: str):
     genre_games = df_games[df_games[genero] == 1]
     # Unimos los ítems con los juegos del género
     genre_items = pd.merge(df_item, genre_games, left_on='item_id', right_on='id')
-    # Eliminamos los valores nulos en 'playtime_forever' y convertimos a entero
-    genre_items = genre_items[~genre_items['playtime_forever'].astype(str).str.contains('None')].copy()
-    genre_items['playtime_forever'] = genre_items['playtime_forever'].astype(int)
-    # Filtramos los ítems con un tiempo de juego menor o igual a 8760 horas
-    filtered_items = genre_items[genre_items['playtime_forever'] <= 8760]
     # Agrupamos por usuario y año, sumando el tiempo de juego
-    grouped_items = filtered_items.groupby(['user_id', 'anio'])['playtime_forever'].sum().reset_index()
+    grouped_items = genre_items.groupby(['user_id', 'anio'])['playtime_forever'].sum().reset_index()
     # Limitamos el tiempo de juego a un máximo de 8760 horas
     grouped_items['playtime_forever'] = grouped_items['playtime_forever'].clip(upper=8760)
     # Identificamos al usuario con más horas jugadas
