@@ -179,34 +179,33 @@ def developer_reviews_analysis(desarrolladora: str):
 
 @app.get("/UserForGenre/{genero}")
 def UserForGenre(genero: str):
-    # Capitalizamos el nombre del género
-    genero = genero.capitalize()
-    # Filtramos los juegos del género especificado
-    genre_games = df_games[df_games[genero] == 1]
-    genre_games.drop(columns=['genres', 'title', 'tags', 'price', 'developer', 'Accounting', 'Action', 'Adventure', 'Animation&amp', 'AudioProduction', 'Casual','Design&amp', 'EarlyAccess', 'Education', 'FreetoPlay', 'Illustration', 'Indie', 'MassivelyMultiplayer', 'Modeling', 'None', 'PhotoEditing', 'RPG', 'Racing', 'Simulation', 'SoftwareTraining', 'Sports', 'Strategy', 'Utilities', 'VideoProduction', 'WebPublishing', 'mes', 'dia'], inplace=True)
-    # Unimos los ítems con los juegos del género y filtramos valores nulos
-    genre_items = pd.merge(df_item, genre_games, left_on='item_id', right_on='id')
-    genre_items = genre_items[genre_items['playtime_forever'].notna()]
-    # Filtramos los ítems con un tiempo de juego menor o igual a 8760 horas
-    filtered_items = genre_items[genre_items['playtime_forever'] <= 8760]
-    # Agrupamos por usuario y año, sumando el tiempo de juego
-    grouped_items = filtered_items.groupby(['user_id', 'anio'])['playtime_forever'].sum().reset_index()
-    # Limitamos el tiempo de juego a un máximo de 8760 horas
-    grouped_items['playtime_forever'] = grouped_items['playtime_forever'].clip(upper=8760)
-    # Identificamos al usuario con más horas jugadas
-    top_user = grouped_items.groupby('user_id')['playtime_forever'].sum().idxmax()
-    # Obtenemos las horas jugadas por año del usuario con más horas jugadas
-    top_user_hours = grouped_items[grouped_items['user_id'] == top_user].copy()
-    acumulacion_horas_anio = top_user_hours.groupby('anio')['playtime_forever'].sum().reset_index()
-    # Creamos una lista con las horas jugadas por año
-    horas_jugadas_por_anio = [{'anio': anio, 'horas': horas} for anio, horas in zip(acumulacion_horas_anio['anio'], acumulacion_horas_anio['playtime_forever'])]
-    # Creamos un diccionario con los resultados
-    resultado = {
-        'Usuario con más horas jugadas para género {}:'.format(genero): top_user,
-        'Horas jugadas': horas_jugadas_por_anio
+    # Hace una copia del DataFrame df_games para evitar modificar los datos originales
+    df_genres = df_games.copy()
+    # Divide la columna 'genres' en una lista de géneros para cada juego
+    df_genres['genres'] = df_genres['genres'].apply(lambda x: x.split(',') if isinstance(x, str) else [])
+    # Elimina las columnas que no son necesarias para este análisis
+    df_genres.drop(['title', 'tags', 'price', 'developer'], axis=1, inplace=True)
+    # Filtra el DataFrame para incluir solo las filas donde el género especificado está presente en la lista 'genres'
+    df_genre = df_genres[df_genres['genres'].apply(lambda x: genero in x if isinstance(x, list) else False)]
+    # Filtra el DataFrame df_item para incluir solo las filas donde 'item_id' está en la lista de 'id' de df_genre
+    df_user_aggregated = df_item[df_item['item_id'].isin(df_genre['id'])]
+    # Realiza un merge entre df_user_aggregated y df_genre para obtener la columna 'anio', usando 'item_id' de df_user_aggregated y 'id' de df_genre
+    df_user_aggregated = df_user_aggregated.merge(df_genre[['id', 'anio']], left_on='item_id', right_on='id', how='left')
+    # Agrupa por 'user_id' y suma 'playtime_forever' para obtener el total de horas jugadas por cada usuario
+    user_hours_per_game = df_user_aggregated.groupby('user_id')['playtime_forever'].sum()
+    # Obtiene el 'user_id' del usuario con más horas jugadas
+    user_most_hours_user_id = user_hours_per_game.idxmax()
+    # Filtra df_user_aggregated para incluir solo las filas del usuario con más horas jugadas
+    user_most_hours_df = df_user_aggregated[df_user_aggregated['user_id'] == user_most_hours_user_id]
+    # Agrupa por 'anio' y suma 'playtime_forever' para obtener el total de horas jugadas por año
+    hours_per_year = user_most_hours_df.groupby('anio')['playtime_forever'].sum().reset_index()
+    # Crea el resultado en forma de diccionario con el usuario que más jugó y las horas jugadas por año
+    result = {
+        "Usuario con más horas jugadas para " + genero: user_most_hours_user_id,
+        "Horas jugadas": [{"Año": int(row['anio']), "Horas": int(row['playtime_forever'])} for index, row in hours_per_year.iterrows()]
     }
-    # Devolvemos los resultados
-    return resultado
+    # Devuelve el resultado
+    return result
 
 @app.get('/recomendacion_juego/{juego_id}')
 def recomendacion_juego(juego_id: int):
