@@ -1,0 +1,3 @@
+ETL
+
+Cabe aclarar que los archivos originales del dataset, que fueron sacados del repositorio donde esta la consigna del trabajo, no se encuentran en las localizaciones especificadas, ya que github cuenta con un limite de tamaño para los archivos que se suben, y estos datasets superaban por mucho ese limite. Por lo tanto solo se cuenta con el resultado de todas las correcciones y modificaciones del ETL, que son los archivos .parquet
